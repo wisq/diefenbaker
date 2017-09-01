@@ -29,6 +29,7 @@ class SocketCert
     starttls(socket)
 
     ssl_socket = OpenSSL::SSL::SSLSocket.new(socket)
+    ssl_socket.hostname = @host
     ssl_socket.connect
     return ssl_socket.peer_cert
   ensure
