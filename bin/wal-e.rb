@@ -62,7 +62,6 @@ def measure_last_full
       record_time_size(time, get_base_size(backup_id), 'base', 'base image')
     end
   end
-
 end
 
 def get_base_size(backup_id)
