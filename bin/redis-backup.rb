@@ -23,9 +23,9 @@ end
 
 # Pretty much the same code as wal-e.rb for incrementals.
 # If we do this again, it's time to extract it out to a lib.
-def measure_last_backup
+def measure_last_backup(prefix)
   s3 = Aws::S3::Client.new
-  uri = URI.parse(ENV['WALE_S3_PREFIX'])
+  uri = URI.parse(prefix)
   bucket = uri.host
   prefix = "redis/dump-"
 
@@ -51,4 +51,4 @@ def measure_last_backup
   end
 end
 
-measure_last_backup
+measure_last_backup(*ARGV)
