@@ -12,7 +12,7 @@ $LOAD_PATH << File.join(ROOT, 'lib')
 require 'diefenbaker/capture'
 require 'diefenbaker/json_store'
 
-STORE_PATH = File.join(ROOT, 'tmp/wal-e_last_wal.json')
+STORE_PATH = File.join(ROOT, 'cache/wal-e_last_wal.json')
 
 @statsd = Datadog::Statsd.new
 @s3 = Aws::S3::Client.new

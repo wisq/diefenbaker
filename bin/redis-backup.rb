@@ -11,7 +11,7 @@ $LOAD_PATH << File.join(ROOT, 'lib')
 require 'diefenbaker/capture'
 require 'diefenbaker/json_store'
 
-STORE_PATH = File.join(ROOT, 'tmp/redis-backup.json')
+STORE_PATH = File.join(ROOT, 'cache/redis-backup.json')
 
 @statsd = Datadog::Statsd.new
 

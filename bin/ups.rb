@@ -4,7 +4,7 @@ require 'bundler/setup'
 require 'datadog/statsd'
 require 'pathname'
 
-TAGS_PATH = Pathname.new('tags')
+TAGS_PATH = Pathname.new('cache/tags')
 
 def get_ups_data(ups)
   data = {}
