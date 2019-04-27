@@ -13,6 +13,7 @@ INTERESTING = Set.new [
   'ups.input.voltage',
   'ups.input.voltage.nominal',
   'ups.output.voltage',
+  'ups.beeper.status',
 ]
 
 def get_ups_data(ups)
