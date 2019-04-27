@@ -126,15 +126,13 @@ Usage: `ups.rb <ups1> <ups2> ...`
 
 Each UPS may be either a bare name (e.g. `myups`) for a local UPS, or `name@IP` for a remote UPS (e.g. `yourups@1.2.3.4`).
 
-All values from `upsc <ups>` will be reported:
+Select values from `upsc <ups>` will be reported.  See (or edit) the `INTERESTING` constant in the script to adjust which values are selected.  (This script used to just send everything, but that turned out to be a big waste of Datadog custom metrics.)
+
+Values are converted:
 
 * Numbers are reported as gauges.
-* Strings are converted to a number:
-  * A directory is created under `tags/<metric name>`.
-  * Each time a new string value is seen, a file is added to this directory.
-  * The filename is the `upsc` string, and the value is the number to report to Datadog.
-  * If the number is over 100, we won't report this metric.  This is to avoid excessive tag proliferation in Datadog.
-  * Regardless of what value we send, we will also tag the metric with `value:<str>`, where `str` is a sanitised version of the string.
+* "Enabled" is reported as 1, "disabled" or "muted" is reported as 0.
+* Strings are ignored.
 * The `ups.status` field is handled specially:
   * We split the status flags up and report each one.
   * Each will have a value of `1` and a tag of `flag:<flag>`, e.g. `flag:OL` for the "online" (OL) status.

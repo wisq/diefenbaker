@@ -3,8 +3,17 @@
 require 'bundler/setup'
 require 'datadog/statsd'
 require 'pathname'
+require 'set'
 
-TAGS_PATH = Pathname.new('cache/tags')
+INTERESTING = Set.new [
+  'ups.status',
+  'ups.load',
+  'ups.battery.charge',
+  'ups.battery.runtime',
+  'ups.input.voltage',
+  'ups.input.voltage.nominal',
+  'ups.output.voltage',
+]
 
 def get_ups_data(ups)
   data = {}
@@ -12,8 +21,8 @@ def get_ups_data(ups)
     fh.each_line do |line|
       key, str = line.chomp.split(': ', 2)
 
-      next if key.start_with?('driver.parameter.')
       key = "ups.#{key}" unless key.start_with?("ups.")
+      next unless INTERESTING.member?(key)
 
       value = nil
       if key == 'ups.status'
@@ -59,36 +68,13 @@ def record_ups_data(statsd, ups, data)
     elsif value == false
       value = 0
     elsif value.kind_of?(String)
-      safe = safe_string(value)
-      value = tag_value(key, safe)
-      if value <= 100
-        # Datadog doesn't want >1000 tags per metric.
-        # I don't expect any value will hit 100 uniques,
-        # but if it does, we should probably stop tagging it.
-        tags << "value:#{safe}"
-      end
+      next
     else
       raise "Unknown type: #{value.inspect} (#{value.class})"
     end
 
     statsd.gauge(key, value, tags: tags)
   end
-end
-
-def tag_value(key, value)
-  tags_dir = TAGS_PATH + key
-  tags_dir.mkdir unless tags_dir.directory?
-
-  tag_file = tags_dir + value
-  return tag_file.read.to_i if tag_file.exist?
-
-  next_value = tags_dir.children.count + 1
-  tag_file.write(next_value.to_s)
-  return next_value
-end
-
-def safe_string(str)
-  return str.gsub(/[^A-Za-z0-9 .-]+/, '_')
 end
 
 ups_data = ARGV.map do |ups|
